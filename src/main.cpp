@@ -68,7 +68,12 @@ class $modify(MyPlayLayer, PlayLayer) {
 
 	void postUpdate(float dt) {
 		PlayLayer::postUpdate(dt);
-
-		log::info("update called");
+		auto* p = this->m_player1;
+        if (!p) return;
+		
+		log::info("{}, {}", 
+			p->getRealPosition().x, p->getRealPosition().y);
+		
+		log::info("current percentage: {}", this->getCurrentPercent());
 	}
 };
