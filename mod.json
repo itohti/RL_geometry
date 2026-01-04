@@ -1,0 +1,17 @@
+{
+	"geode": "4.10.0",
+	"gd": {
+		"win": "2.2074",
+		"android": "2.2074",
+		"mac": "2.2074",
+		"ios": "2.2074"
+	},
+	"id": "izdar-tohti-ezimet-uyghur.rl_geometry",
+	"name": "RL_geometry",
+	"version": "v1.0.0",
+	"developer": "Izdar Tohti Ezimet Uyghur",
+	"description": "A rl bot to complete any level in geometry dash",
+	"dependencies": {
+		"geode.node-ids": ">=v1.20.0"
+	}
+}
