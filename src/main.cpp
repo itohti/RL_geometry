@@ -4,11 +4,8 @@
  * Include the Geode headers.
  */
 #include <Geode/Geode.hpp>
-
-/**
- * Brings cocos2d and all Geode namespaces to the current scope.
- */
 using namespace geode::prelude;
+#include "pipe_util.hpp"
 
 /**
  * `$modify` lets you extend and modify GD's classes.
@@ -40,7 +37,6 @@ class $modify(MyMenuLayer, MenuLayer) {
 			return false;
 
 		auto winSize = CCDirector::get()->getWinSize();
-		
 		auto label = CCLabelBMFont::create("WE ARE UP!", "bigFont.fnt");
 		label->setPosition(winSize / 2);
 		this->addChild(label);
@@ -60,6 +56,27 @@ class $modify(MyMenuLayer, MenuLayer) {
 
 #include <Geode/modify/PlayLayer.hpp>
 class $modify(MyPlayLayer, PlayLayer) {
+	bool init(GJGameLevel* level, bool useReplay, bool dontCreateObjects) {
+		if (!PlayLayer::init(level, useReplay, dontCreateObjects)) {
+			return false;
+		}
+
+		bool result = initPipe();
+		if (result) {
+			sendToPython(format("Started {}", level->m_levelName));
+		}
+		else {
+			auto winSize = CCDirector::get()->getWinSize();
+			auto label = CCLabelBMFont::create("Python program is not running!", "bigFont.fnt");
+			label->setPosition(winSize / 2);
+			this->addChild(label);
+		}
+
+		log::info("Level Name: {}", level->m_levelName);
+
+		return true;
+	}
+
 	void startGame() {
 		PlayLayer::startGame();
 
@@ -71,9 +88,20 @@ class $modify(MyPlayLayer, PlayLayer) {
 		auto* p = this->m_player1;
         if (!p) return;
 		
-		log::info("{}, {}", 
-			p->getRealPosition().x, p->getRealPosition().y);
+		// log::info("{}, {}", 
+		// 	p->getRealPosition().x, p->getRealPosition().y);
 		
-		log::info("current percentage: {}", this->getCurrentPercent());
+		// log::info("current percentage: {}", this->getCurrentPercent());
+		std::string bot_command;
+		readFromPython(bot_command);
+
+		if (!bot_command.empty()) {
+			log::info("received command: {}", bot_command);
+		}
+	}
+
+	void onQuit() {
+		PlayLayer::onQuit();
+		closePipe();
 	}
 };
