@@ -58,22 +58,88 @@ class $modify(MyMenuLayer, MenuLayer) {
 	}
 };
 
+struct playerStatus{
+		double currentPercentage;
+		double xPosition;
+		double yPosition;
+	
+		bool isAlive;
+		bool isShip;
+		bool isBird;
+		bool isDart;
+		bool isRobot;
+		bool isSpider;
+		bool isUpsideDown;
+		bool isOnGround;
+		
+		
+	};
+playerStatus currentPlayer;
+bool wasAlive = true;
+
 #include <Geode/modify/PlayLayer.hpp>
 class $modify(MyPlayLayer, PlayLayer) {
+	// This struct stores relevant playerStatus info that will be fed to python
+	
+	void resetLevel(){
+		PlayLayer::resetLevel();
+		log::info("Level Reset");
+		wasAlive = true;
+
+	}
 	void startGame() {
 		PlayLayer::startGame();
-
 		log::info("started a level");
 	}
 
 	void postUpdate(float dt) {
 		PlayLayer::postUpdate(dt);
+
 		auto* p = this->m_player1;
-        if (!p) return;
-		
-		log::info("{}, {}", 
-			p->getRealPosition().x, p->getRealPosition().y);
-		
-		log::info("current percentage: {}", this->getCurrentPercent());
-	}
+		if (!p) return;
+
+		// UPDATE STRUCT
+		currentPlayer.currentPercentage = this->getCurrentPercent();
+		currentPlayer.xPosition = p->getRealPosition().x;
+		currentPlayer.yPosition = p->getRealPosition().y;
+	
+		currentPlayer.isAlive = !p->m_isDead;
+
+		currentPlayer.isShip = p->m_isShip;
+		currentPlayer.isBird = p->m_isBird;
+		currentPlayer.isDart = p->m_isDart;
+		currentPlayer.isRobot = p->m_isRobot;
+		currentPlayer.isSpider = p->m_isSpider;
+
+		currentPlayer.isUpsideDown = p->m_isUpsideDown;
+		currentPlayer.isOnGround = p->m_isOnGround;
+
+		// LOG ON DEATH (ONCE)
+		if (wasAlive && !currentPlayer.isAlive) {
+			log::info("=== PLAYER DIED ===");
+			log::info("Percent: {}", currentPlayer.currentPercentage);
+			log::info("Position: ({}, {})", currentPlayer.xPosition, currentPlayer.yPosition);
+	
+			log::info("Alive: {}", currentPlayer.isAlive);
+
+			log::info("Modes | Ship:{} Bird:{} Dart:{} Robot:{} Spider:{}",
+				currentPlayer.isShip,
+				currentPlayer.isBird,
+				currentPlayer.isDart,
+				currentPlayer.isRobot,
+				currentPlayer.isSpider
+			);
+
+			log::info("UpsideDown:{} OnGround:{}",
+				currentPlayer.isUpsideDown,
+				currentPlayer.isOnGround
+			);
+		}
+
+		// remember for next frame
+		wasAlive = currentPlayer.isAlive;
+		}
+
+
+	
 };
