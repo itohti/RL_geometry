@@ -61,6 +61,7 @@ class $modify(MyPlayLayer, PlayLayer) {
 			return false;
 		}
 
+#ifdef _WIN32
 		bool result = initPipe();
 		if (result) {
 			sendToPython(format("Started {}", level->m_levelName));
@@ -71,6 +72,7 @@ class $modify(MyPlayLayer, PlayLayer) {
 			label->setPosition(winSize / 2);
 			this->addChild(label);
 		}
+#endif
 
 		log::info("Level Name: {}", level->m_levelName);
 
@@ -92,16 +94,20 @@ class $modify(MyPlayLayer, PlayLayer) {
 		// 	p->getRealPosition().x, p->getRealPosition().y);
 		
 		// log::info("current percentage: {}", this->getCurrentPercent());
+#ifdef _WIN32
 		std::string bot_command;
 		readFromPython(bot_command);
 
 		if (!bot_command.empty()) {
 			log::info("received command: {}", bot_command);
 		}
+#endif
 	}
 
 	void onQuit() {
 		PlayLayer::onQuit();
+#ifdef _WIN32
 		closePipe();
+#endif
 	}
 };
