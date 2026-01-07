@@ -172,4 +172,11 @@ class $modify(MyPlayLayer, PlayLayer) {
 		// remember for next frame
 		wasAlive = currentPlayer.isAlive;
 	}
+
+	void onQuit() {
+		PlayLayer::onQuit();
+		log::info("Exited out of the level. Closing pipe...");
+		closeEliPipe();
+		closePipe();
+	}
 };
