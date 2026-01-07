@@ -96,7 +96,8 @@ class $modify(MyPlayLayer, PlayLayer) {
 		else {
 			auto winSize = CCDirector::get()->getWinSize();
 			auto label = CCLabelBMFont::create("Python program is not running!", "bigFont.fnt");
-			label->setPosition(winSize / 2);
+			label->setPosition(winSize.width-85, 25);
+			label -> setScale(.3);
 			this->addChild(label);
 		}
 #endif
